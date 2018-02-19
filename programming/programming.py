@@ -1,7 +1,8 @@
 import os
 import numpy as np
 
-# convert simple html to json
+# a recursive function convert simple html text to json
+# identifies the keys in format <.*>value</.*>
 def convert_to_json(text,index):
     state = 0
     key = ""
@@ -47,13 +48,13 @@ def convert_to_json(text,index):
                 key2+=l
     return data_json,index
 
-# read file and pass the data to convert json
+# read file and pass the data to convert to json
 def extractInfo(f):
     text = open(f).read()
     data_json,_ = convert_to_json(np.array(list(text.strip())),0)
     return data_json
 
-# Data for Task
+# Get the filenames given the path to directory
 def getfilenames(path):
     filepaths = []
     for paths,folders,files in os.walk(path):
@@ -63,6 +64,8 @@ def getfilenames(path):
                     filepaths.append(paths+'/'+file)
     return filepaths
 
+
+#Get the list of artists code
 def script1(filepaths,whereto):
     result = []
     for file in filepaths:
@@ -70,12 +73,14 @@ def script1(filepaths,whereto):
         result.append(access(data,whereto['artist']))
     return result
 
+# read the nested dictionary using the whereto list of keys
 def access(data,wheretolist):
     temp = data
     for l in wheretolist:
         temp = temp[l]
     return temp
 
+#for the problems 2,3,4 prepare the the artist
 def prepData(file,artist_index,artist_count,result,whereto):
     data = extractInfo(file)
     temp = {}
@@ -90,7 +95,7 @@ def prepData(file,artist_index,artist_count,result,whereto):
         index = artist_index[temp['artist']]
     return artist_index,artist_count,index,data
 
-
+#Get the list of artists with works
 def script2(filepaths,whereto):
     result = []
     artist_index = {}
@@ -100,6 +105,7 @@ def script2(filepaths,whereto):
         result[index]['works'].append(access(data,whereto['title']))
     return result
 
+#Get the list of artists with price
 def script3(filepaths,whereto):
     result = []
     artist_index = {}
@@ -109,6 +115,7 @@ def script3(filepaths,whereto):
         result[index]['works'].append({'title': access(data,whereto['title']), 'price': access(data,whereto['price'])})
     return result
 
+#Get the list of artists with currency and amount
 def script4(filepaths,whereto):
     result = []
     artist_index = {}
@@ -119,6 +126,7 @@ def script4(filepaths,whereto):
         result[index]['works'].append({'title': access(data,whereto['title']), 'currency': currency, 'amount': amount })
     return result
 
+#Get the list of artists with currency and amount for the new data
 def script5(filepaths,whereto):
     result = []
     artist_index = {}
@@ -131,6 +139,8 @@ def script5(filepaths,whereto):
 filepaths = getfilenames("lot-parser/data/2015-03-18/")
 
 print("Reading the directory 2015-03-18 : ","\n")
+
+## whereto has a list of keys for each info we want to extract. these keys are the nested keys in dict to get to the relevant information.
 
 whereto = {"artist": ["html","body","h2"]}
 result1 = script1(filepaths,whereto)
@@ -147,6 +157,9 @@ print("Results of Task3 : ",result3,"\n")
 whereto = {"artist": ["html","body","h2"],"title":["html","title"],"price":["html","body","div_1"]}
 result4 = script4(filepaths,whereto)
 print("Results of Task4 : ",result4,"\n")
+
+
+## reading the new data and extracting info
 
 filepaths = getfilenames("lot-parser/data/2017-12-20/")
 
