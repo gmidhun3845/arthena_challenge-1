@@ -82,6 +82,7 @@ def load_train(file):
     data['location'] = data['location'].fillna("")
     return data
 
+# apply the data processsing logic to train data -- implement the same functionality as load_train
 def load_test_data(file,rows):
     global names
     global nation
@@ -165,6 +166,8 @@ train_loaded = False
 enc = OneHotEncoder(handle_unknown='ignore',categorical_features=[2,3,5,6,10],sparse=False)
 lasso = Lasso(fit_intercept=True, max_iter=10000, tol= 0.1,random_state=42)
 
+
+# generate the numpy data and train the model
 def generate_model(data):
     global names
     global nation
@@ -205,6 +208,8 @@ def generate_model(data):
 
     lasso.fit(X,y)
 
+
+# generate the test data
 def generate_test_data(data):
     global names
     global nation
@@ -236,6 +241,7 @@ def generate_test_data(data):
     X = np.delete(numpy_data,-4,1)
     return X,y
 
+# predict the using model
 def predict(file,rows):
     global names
     global nation
